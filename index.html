@@ -19,13 +19,13 @@
 
 <script>
 // =====================
-// TRIAL + REAL BUS STOPS
+// BUS STOPS (TRIAL + REAL)
 // =====================
 const stops = [
-  // 🔴 TRIAL STOP (your current location)
+  // 🔴 TRIAL STOP (use your CURRENT location)
   { name: "TEST STOP", lat: 9.9312328, lng: 76.2673041, radius: 1000 },
 
-  // 🚌 REAL ROUTE STOPS (kept for later)
+  // 🚌 REAL ROUTE STOPS
   { name: "Ranni", lat: 9.383484, lng: 76.7820284, radius: 200 },
   { name: "Chemthomkara", lat: 9.3940175, lng: 76.7929501, radius: 200 },
   { name: "Mannamaruthy", lat: 9.4239291, lng: 76.7881618, radius: 200 },
@@ -38,7 +38,9 @@ const stops = [
 
 let visited = {};
 
-// Distance calculation (Haversine formula)
+// =====================
+// DISTANCE FUNCTION
+// =====================
 function distance(lat1, lon1, lat2, lon2) {
   const R = 6371000; // meters
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -51,7 +53,9 @@ function distance(lat1, lon1, lat2, lon2) {
   return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
 }
 
-// Button click → start GPS
+// =====================
+// BUTTON → START GPS
+// =====================
 document.getElementById("btn").addEventListener("click", function () {
   document.getElementById("status").innerText = "Tracking location...";
 

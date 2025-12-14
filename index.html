@@ -6,76 +6,46 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="font-family: Arial, sans-serif; padding: 20px;">
+<body style="font-family: Arial; padding: 20px;">
 
 <h2>🚌 Bus Location Detector</h2>
 
-<button onclick="startTracking()" style="padding:10px 15px; font-size:16px;">
-📍 Start Location Tracking
+<button id="btn" style="padding:12px 18px; font-size:16px;">
+📍 Start Location
 </button>
 
-<p id="status">Click the button to allow GPS</p>
+<p id="status">Waiting for button click</p>
 <p id="coords"></p>
 
 <script>
-const stops = [
-  { name: "TEST STOP", lat: 9.9312328, lng: 76.2673041, radius: 1000 }
+document.getElementById("btn").addEventListener("click", function () {
+  document.getElementById("status").innerText = "Requesting GPS...";
 
+  if (!navigator.geolocation) {
+    document.getElementById("status").innerText = "Geolocation not supported";
+    return;
+  }
 
-  { name: "Ranni", lat: 9.383484, lng: 76.7820284, radius: 200 },
-  { name: "Chemthomkara", lat: 9.3940175, lng: 76.7929501, radius: 200 },
-  { name: "Mannamaruthy", lat: 9.4239291, lng: 76.7881618, radius: 200 },
-  { name: "Placherry", lat: 9.4481832, lng: 76.795214, radius: 200 },
-  { name: "Mukkada", lat: 9.4630569, lng: 76.7994071, radius: 200 },
-  { name: "Kanakapalam", lat: 9.463820, lng: 76.833705, radius: 200 },
-  { name: "Karinkallumoozhy", lat: 9.471948, lng: 76.843904, radius: 200 },
-  { name: "Erumely", lat: 9.4810776, lng: 76.8442252, radius: 200 }
-];
-
-let visited = {};
-
-function distance(lat1, lon1, lat2, lon2) {
-  const R = 6371000;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
-  const a =
-    Math.sin(dLat/2)**2 +
-    Math.cos(lat1*Math.PI/180) *
-    Math.cos(lat2*Math.PI/180) *
-    Math.sin(dLon/2)**2;
-  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
-}
-
-function startTracking() {
-  document.getElementById("status").innerText = "Requesting GPS permission...";
-
-  navigator.geolocation.watchPosition(
-    pos => {
+  navigator.geolocation.getCurrentPosition(
+    function (pos) {
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
 
       document.getElementById("coords").innerHTML =
-        `📍 Latitude: ${lat}<br>📍 Longitude: ${lon}`;
+        "Latitude: " + lat + "<br>Longitude: " + lon;
 
-      stops.forEach(stop => {
-        const d = distance(lat, lon, stop.lat, stop.lng);
-        if (d <= stop.radius && !visited[stop.name]) {
-          visited[stop.name] = true;
-          document.getElementById("status").innerHTML =
-            `✅ Bus reached <b>${stop.name}</b>`;
-        }
-      });
-    },
-    err => {
       document.getElementById("status").innerText =
-        "❌ Location access denied or unavailable";
+        "GPS WORKING ✅";
+    },
+    function (err) {
+      document.getElementById("status").innerText =
+        "GPS ERROR ❌ Permission denied or unavailable";
     },
     { enableHighAccuracy: true }
   );
-}
+});
 </script>
 
 </body>
 </html>
-
 

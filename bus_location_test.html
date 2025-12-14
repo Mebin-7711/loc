@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bus Location Detector</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="font-family: Arial, sans-serif; padding: 20px;">
+
+<h2>🚌 Bus Location Detector</h2>
+<p id="status">📍 Waiting for GPS permission...</p>
+<p id="coords"></p>
+
+<script>
+// ===== BUS STOPS (MVP ROUTE) =====
+const stops = [
+  { name: "Ranni", lat: 9.383484, lng: 76.7820284, radius: 200 },
+  { name: "Chemthomkara", lat: 9.3940175, lng: 76.7929501, radius: 200 },
+  { name: "Mannamaruthy", lat: 9.4239291, lng: 76.7881618, radius: 200 },
+  { name: "Placherry", lat: 9.4481832, lng: 76.795214, radius: 200 },
+  { name: "Mukkada", lat: 9.4630569, lng: 76.7994071, radius: 200 },
+  { name: "Kanakapalam", lat: 9.463820, lng: 76.833705, radius: 200 },
+  { name: "Karinkallumoozhy", lat: 9.471948, lng: 76.843904, radius: 200 },
+  { name: "Erumely", lat: 9.4810776, lng: 76.8442252, radius: 200 }
+];
+
+// Track visited stops
+let visited = {};
+
+// Haversine distance function
+function distanceInMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+}
+
+// GPS watcher
+if ("geolocation" in navigator) {
+  navigator.geolocation.watchPosition(
+    position => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      document.getElementById("coords").innerHTML =
+        `📍 Current Location:<br>Latitude: ${lat}<br>Longitude: ${lon}`;
+
+      stops.forEach(stop => {
+        const d = distanceInMeters(lat, lon, stop.lat, stop.lng);
+
+        if (d <= stop.radius && !visited[stop.name]) {
+          visited[stop.name] = true;
+          document.getElementById("status").innerHTML =
+            `✅ Bus reached <b>${stop.name}</b>`;
+        }
+      });
+    },
+    error => {
+      let msg = "❌ GPS error: ";
+      if (error.code === 1) msg += "Permission denied";
+      else if (error.code === 2) msg += "Position unavailable";
+      else if (error.code === 3) msg += "Timeout";
+      else msg += "Unknown error";
+      document.getElementById("status").innerText = msg;
+    },
+    { enableHighAccuracy: true }
+  );
+} else {
+  document.getElementById("status").innerText =
+    "❌ Geolocation not supported on this device";
+}
+</script>
+
+</body>
+</html>

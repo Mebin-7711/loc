@@ -8,7 +8,7 @@
 
 <body style="font-family: Arial, sans-serif; padding: 20px;">
 
-<h2>🚌 Bus Location Detector (Trial)</h2>
+<h2>🚌 Bus Location Detector</h2>
 
 <button id="btn" style="padding:12px 18px; font-size:16px;">
 📍 Start Location
@@ -19,13 +19,9 @@
 
 <script>
 // =====================
-// BUS STOPS (TRIAL + REAL)
+// REAL BUS ROUTE STOPS
 // =====================
 const stops = [
-  // 🔴 TRIAL STOP (use your CURRENT location)
-  { name: "TEST STOP", lat: 9.9312328, lng: 76.2673041, radius: 1000 },
-
-  // 🚌 REAL ROUTE STOPS
   { name: "Ranni", lat: 9.383484, lng: 76.7820284, radius: 200 },
   { name: "Chemthomkara", lat: 9.3940175, lng: 76.7929501, radius: 200 },
   { name: "Mannamaruthy", lat: 9.4239291, lng: 76.7881618, radius: 200 },
@@ -36,6 +32,7 @@ const stops = [
   { name: "Erumely", lat: 9.4810776, lng: 76.8442252, radius: 200 }
 ];
 
+// Keeps track of already detected stops
 let visited = {};
 
 // =====================
@@ -54,7 +51,7 @@ function distance(lat1, lon1, lat2, lon2) {
 }
 
 // =====================
-// BUTTON → START GPS
+// START GPS ON BUTTON CLICK
 // =====================
 document.getElementById("btn").addEventListener("click", function () {
   document.getElementById("status").innerText = "Tracking location...";
